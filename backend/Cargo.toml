@@ -1,0 +1,25 @@
+[package]
+name = "cooking"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = { version = "0.7.4", features = ["http2", "multipart"] }
+futures = "0.3.30"
+markdown = "0.3.0"
+redis = { version = "0.26.1", features = ["tokio-comp", "json"] }
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.114"
+slug = "0.1.5"
+spow = "0.3.0"
+tokio = { version = "1.36.0", features = ["rt-multi-thread"] }
+tokio-util = "0.7.10"
+tracing = "0.1.40"
+tracing-subscriber = {version="0.3.18", features=["json"]} 
+uuid = { version = "1.10.0", features = ["serde"] }
+
+[[bin]]
+name = "migrate"
+path = "src/migrate.rs"
