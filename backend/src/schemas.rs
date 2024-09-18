@@ -1,6 +1,9 @@
 use core::fmt::Display;
 
 use serde::{Deserialize, Serialize};
+use slug::slugify;
+
+use crate::rest::PublishForm;
 
 #[derive(Debug)]
 pub struct AppError {
@@ -91,9 +94,10 @@ pub struct PostEntity {
     pub author: AuthorId,
     pub search_tags: Vec<String>,
     pub body: String,
-    pub space: Option<GroupId>,            // None means public.
-    pub reply_scope: Option<GroupId>,      // None means space inherited
+    pub space: Option<GroupId>,       // None means public.
+    pub reply_scope: Option<GroupId>, // None means space inherited
     pub visibility_scope: Option<GroupId>, // idem
+                                      // pub publish_datetime: Chrono....    // TODO
 }
 impl PostEntity {
     pub fn search_tags(&self) -> Vec<String> {
@@ -102,5 +106,18 @@ impl PostEntity {
             .map(|s| s.to_lowercase())
             .chain(self.search_tags.clone())
             .collect()
+    }
+
+    pub fn from_form(form: PublishForm) -> Self {
+        Self {
+            title: form.title.clone(),
+            slug: slugify(form.title),
+            author: "Some author".to_string(),
+            search_tags: form.tags.split(" ").map(|s| s.to_string()).collect(),
+            body: form.body,
+            space: None,
+            reply_scope: None,
+            visibility_scope: None,
+        }
     }
 }

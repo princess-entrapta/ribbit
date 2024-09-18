@@ -8,7 +8,7 @@ use crate::{schemas::AppError, search::SearchCache};
 
 #[derive(Debug, Clone)]
 pub struct RepositoryDb {
-    client: redis::aio::MultiplexedConnection,
+    pub client: redis::aio::MultiplexedConnection,
 }
 
 impl From<redis::RedisError> for AppError {
@@ -33,13 +33,13 @@ impl RepositoryDb {
 
 #[derive(Debug, Clone)]
 pub struct RepositoryCache {
-    cache: redis::aio::MultiplexedConnection,
+    pub cache: redis::aio::MultiplexedConnection,
 }
 
 #[derive(Debug, Clone)]
 pub struct Repository {
-    redis: RepositoryCache,
-    redka: RepositoryDb,
+    pub redis: RepositoryCache,
+    pub redka: RepositoryDb,
 }
 
 impl Repository {

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <div style="display: contents">
+        <input name="title" type="text">
+        <textarea name="body"></textarea>
+        <input name="tags" type="text">
+        <button disabled onclick=post(event)>Fire</button>
+    </div>
+</body>
+<script>
+    const challenge = [{{ #each challenges }}"{{ this }}", {{/each }}]
+    var nb_chal = challenge.length
+    const results = []
+    var workers = []
+    var btn_enabled = document.querySelector('button:not(:disabled)')
+    if (btn_enabled) btn_enabled.setAttribute('disabled')
+    for (var i = 0; i < 4; i++) {
+        var w = new Worker('/worker.js');
+        workers.push(w)
+        w.onmessage = (ev) => {
+            if (ev.data != '-ready-') {
+                results.push(ev.data)
+            }
+            if (results.length == nb_chal) {
+                document.querySelector('button').removeAttribute('disabled')
+            }
+            if (challenge.length) {
+                ev.target.postMessage({ challenge: challenge.pop() })
+            }
+        }
+    }
+    var t = Date.now()
+    fetch("/spow.wasm").then(
+        (result) => result.arrayBuffer().then((buf) => {
+            for (var i = 0; i < 4; i++) {
+                workers[i].postMessage({ buf })
+            }
+        }).then(() => { })
+    )
+
+    function post(event) {
+        fetch("/en/post", {
+            method: 'POST', body: JSON.stringify({
+                challenges: results, body: document.querySelector('textarea').value,
+                title: document.querySelector("input[name=title]").value,
+                tags: document.querySelector("input[name=tags]").value,
+
+                visibility_group: null,
+                reply_group: null
+            }), headers: { "Content-Type": "application/json" }
+        }).then((resp) => resp.text().then((value) => { window.location = '/en/post/' + value }))
+    }
+</script>
+
+</html>

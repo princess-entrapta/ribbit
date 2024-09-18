@@ -1,5 +1,6 @@
 use std::usize;
 
+use crate::indexing::InsertHandle;
 use crate::schemas::{AppError, AuthorInfo, Page, Post};
 use crate::schemas::{AuthorEntity, PostEntity};
 use crate::search::{ItemRepo, SearchDb};
@@ -70,4 +71,11 @@ pub async fn find_post(
             profile_picture: "https://example.com".to_string(),
         },
     ))
+}
+
+pub async fn register_post(
+    db: impl InsertHandle<String, String, PostEntity, AppError>,
+    form: PostEntity,
+) -> Result<(), AppError> {
+    db.insert_item(form).await
 }

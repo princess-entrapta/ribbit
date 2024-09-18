@@ -16,8 +16,8 @@ services:
         ports:
             - 8062:8062
         volumes:
-            - ./target/debug/cooking:/srv/cooking
-        command: "/srv/cooking"
+            - ./target/debug/ribbit:/srv/ribbit
+        command: "/srv/ribbit"
         links:
             - redis
             - redka
