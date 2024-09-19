@@ -1,0 +1,9 @@
+<html>
+
+<body>
+    {{#each objects}}
+    <div><a href="post/{{this.slug}}">{{ this.title }} </a>{{ this.author.name}}</div>
+    {{/each}}
+</body>
+
+</html>

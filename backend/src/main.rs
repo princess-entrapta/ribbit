@@ -32,12 +32,17 @@ async fn main() {
     hb.register_template_string("publish", templates::PUBLISH_TPL)
         .unwrap();
 
+    hb.register_template_string("home", templates::HOME_TPL)
+        .unwrap();
+    hb.register_template_string("list", templates::LIST_TPL)
+        .unwrap();
     let repos = Repositories {
         db: Repository::new("redis", "redka").await,
         hb,
     };
     Pow::init_random().unwrap();
     let app = Router::new()
+        .route("/:lang/home", get(rest::home))
         .route("/:lang/search", get(rest::search_post))
         .route("/:lang/post", post(rest::post_form))
         .route("/:lang/post/:slug", get(rest::get_post))

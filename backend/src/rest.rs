@@ -31,7 +31,13 @@ pub async fn search_post(
         tracing::error!("{:?}", result.unwrap_err());
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
     }
-    Json(result.unwrap()).into_response()
+    match repo.hb.render("list", &result.unwrap()) {
+        Ok(html) => Html::from(html).into_response(),
+        Err(err) => {
+            tracing::error!("{:?}", err.to_string());
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
+    }
 }
 
 pub async fn get_post(
@@ -44,6 +50,16 @@ pub async fn get_post(
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
     }
     match repo.hb.render("post", &result.unwrap()) {
+        Ok(html) => Html::from(html).into_response(),
+        Err(err) => {
+            tracing::error!("{:?}", err.to_string());
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
+    }
+}
+
+pub async fn home(State(repo): State<Repositories>, Path(lang): Path<String>) -> impl IntoResponse {
+    match repo.hb.render("home", &json!({})) {
         Ok(html) => Html::from(html).into_response(),
         Err(err) => {
             tracing::error!("{:?}", err.to_string());

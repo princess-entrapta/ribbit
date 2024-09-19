@@ -114,7 +114,7 @@ impl PostEntity {
             slug: slugify(form.title),
             author: "Some author".to_string(),
             search_tags: form.tags.split(" ").map(|s| s.to_string()).collect(),
-            body: form.body,
+            body: markdown::to_html(form.body.as_str()).to_owned(),
             space: None,
             reply_scope: None,
             visibility_scope: None,

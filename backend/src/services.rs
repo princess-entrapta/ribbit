@@ -1,6 +1,6 @@
 use std::usize;
 
-use crate::indexing::InsertHandle;
+use crate::indexing::{insert_and_index_item, InsertHandle};
 use crate::schemas::{AppError, AuthorInfo, Page, Post};
 use crate::schemas::{AuthorEntity, PostEntity};
 use crate::search::{ItemRepo, SearchDb};
@@ -35,7 +35,7 @@ pub async fn find_posts(
     page_num: usize,
 ) -> Result<Page<Post>, AppError> {
     let (posts, nb_items) = db
-        .get_items_for_search(search_query, 12, 3, 18, page_num)
+        .get_items_for_search(search_query, 20, 1, 20, page_num)
         .await?;
 
     Ok(Page {
@@ -54,7 +54,7 @@ pub async fn find_posts(
             .collect(),
         total_objects: nb_items,
         current_page: page_num,
-        per_page: 18,
+        per_page: 20,
     })
 }
 
@@ -77,5 +77,5 @@ pub async fn register_post(
     db: impl InsertHandle<String, String, PostEntity, AppError>,
     form: PostEntity,
 ) -> Result<(), AppError> {
-    db.insert_item(form).await
+    insert_and_index_item(&db, form.slug.clone(), form.clone(), form.search_tags()).await
 }
