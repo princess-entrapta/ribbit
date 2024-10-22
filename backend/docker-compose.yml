@@ -16,17 +16,17 @@ services:
         ports:
             - 8062:8062
         volumes:
-            - ./target/debug/ribbit:/srv/ribbit
+            - ./target/debug/:/srv/
         command: "/srv/ribbit"
         links:
             - redis
             - redka
     redis:
-        image: redis 
+        image: redis
     redka:
         image: nalgeon/redka
         volumes:
             - ./db:/data
-        ports:  
+        ports:
             - 6379:6379
 
